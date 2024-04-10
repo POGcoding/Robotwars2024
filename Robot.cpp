@@ -17,14 +17,15 @@ Robot::Robot (byte tp1, byte ep1, byte tp2, byte ep2, int irp1, long irmod1, int
       sharpIR_six(irp6, irmod6),
       LineSens_TL(linep1),
       LineSens_TR(linep2),
-      /*LineSens_BL(linep3)*/,
+      LineSens_BL(linep3),
       LineSens_BR(linep4),
       leftMotor(mot1, pwm1, dir1),
       rightMotor(mot2, pwm2, dir2) {
 }
 
-// Member Functions : Sensors Distance Measurements
+// Member Functions
 
+// Motor Control Functions
 void Robot::fstart(){
   leftUS.begin();
   rightUS.begin();
@@ -55,7 +56,7 @@ void Robot::RcounterClockwise(){
   rightMotor.setSpeed(255);
 }
 
-  // UltraSonic Sensors
+// UltraSonic Sensors distance measurements
 
 byte Robot::dist_US1(){
   return leftUS.distanceReturn();
@@ -65,7 +66,7 @@ byte Robot:: dist_US2(){
   return rightUS.distanceReturn();
 }
 
-  // IR Sensors
+// IR Sensors distance measurements
 
 int Robot::dist_IR1(){
   return sharpIR_one.distance();
@@ -91,8 +92,7 @@ int Robot::dist_IR6(){
   return sharpIR_six.distance();
 }
 
-  // Line Sensors Edge White Line Readings
-
+// Line Sensors Edge White Line Readings
 bool Robot::WFlag_TL(){
   return LineSens_TL.WhiteFlag();
 }
@@ -109,8 +109,9 @@ bool Robot::WFlag_BR(){
   return LineSens_BR.WhiteFlag();
 }
 
+// Line Sensors Edge White Line Reactions
 void Robot:: WFlag_React(){
-  if(WFlag_TL() && WFlag_TR()){
+  if(WFlag_TL() && WFlag_TR()){ // Both front line sensors read the arena edge line
       stop();
       delay(100);
       backward(); // Move backward
@@ -118,7 +119,7 @@ void Robot:: WFlag_React(){
       stop();
       delay(100);
 
-    } /*else if (WFlag_TL() && WFlag_BL()) {
+    } else if (WFlag_TL() && WFlag_BL()) { // Both left line sensors read the arena edge line
       stop();
       delay(100);
       Rclockwise(); // Move 90 deg clockwise
@@ -130,7 +131,7 @@ void Robot:: WFlag_React(){
       stop();
       delay(100);
       
-    }*/ else if (WFlag_TR() && WFlag_BR()) {
+    } else if (WFlag_TR() && WFlag_BR()) { // Both right line sensors read the arena edge line
       stop();
       delay(100);
       RcounterClockwise(); // Move 90 deg counter clockwise
@@ -142,15 +143,15 @@ void Robot:: WFlag_React(){
       stop();
       delay(100);
       
-    } /*else if (WFlag_BR() && WFlag_BL()) {
+    } else if (WFlag_BR() && WFlag_BL()) { // Both back line sensors read the arena edge line
       stop();
       delay(100);
-      forward();
+      forward(); // Forward
       delay(1000);
       stop();
-      delay(100);*/
+      delay(100);
 
-    } else if (WFlag_TL()) {
+    } else if (WFlag_TL()) { // Front left line sensor reads the arena edge line
       stop();
       delay(100);
       Rclockwise(); // Move 135 deg clockwise
@@ -162,7 +163,7 @@ void Robot:: WFlag_React(){
       stop();
       delay(100);
       
-    } else if (WFlag_TR()) {
+    } else if (WFlag_TR()) { // Front right line sensor reads the arena edge line
       stop();
       delay(100);
       RcounterClockwise(); // Move 135 deg counter clockwise
@@ -174,7 +175,7 @@ void Robot:: WFlag_React(){
       stop();
       delay(100);
 
-    } /*else if (WFlag_BL()) {
+    } else if (WFlag_BL()) { // Back left line sensor reads the arena edge line
       stop();
       delay(100);
       Rclockwise(); // Move 45 deg clockwise
@@ -184,9 +185,9 @@ void Robot:: WFlag_React(){
       forward();
       delay(1000);
       stop();
-      delay(100); */
+      delay(100);
 
-    } else if (WFlag_BR()) {
+    } else if (WFlag_BR()) { // Back right line sensor reads the arena edge line
       stop();
       delay(100);
       RcounterClockwise(); // Move 45 deg counter clockwise
@@ -200,18 +201,17 @@ void Robot:: WFlag_React(){
     }
 }
 
-  // IR Sensors Opponent Flagging
-
+// IR Sensors Opponent Flagging
 bool Robot::OpponentFront(){
   if (dist_IR1() <= 59 && dist_IR2() <= 59) {
     return true;
   }
-
   return false;
 }
 
+// IR Sensors Opponent Search
 void Robot::SearchOpponent(){
-  if(dist_IR3() <= 30 || dist_US1() <= 59) {
+  if(dist_IR3() <= 30 || dist_US1() <= 59) { // IR sensor range readout limited to fit the arena size
     while (!OpponentFront()) {
       RcounterClockwise();
     }

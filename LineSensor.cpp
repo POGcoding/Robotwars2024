@@ -6,7 +6,6 @@ LineSensor::LineSensor(byte pinNumb) {
 }
 
 // Member Functions
-
 bool LineSensor::WhiteFlag(){
   int readout = lineSensorReadout();
   if (readout < 100){

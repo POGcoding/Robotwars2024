@@ -6,6 +6,7 @@ const int irPin = 15;
 volatile bool roundState = false;
 volatile bool isFirstIteration = false;
 
+// Interrupt handler
 void IRAM_ATTR handleInterrupt() {
   if (digitalRead(irPin) == HIGH) {
     roundState = true;
@@ -35,6 +36,4 @@ void loop() {
   } else {
     RobotFinal.stop();
   }
-  
-
 }
